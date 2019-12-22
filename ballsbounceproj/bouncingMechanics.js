@@ -70,8 +70,8 @@ Ball.prototype.ballCollisionDetect = function() { // check for ball collisions
                         balls[i].velY = hold2;*/ //not keeping these settings because they are buggier
                         this.velX = -(this.velX);
                         this.velY = -(this.velY);
-                        //balls[i].velX = -(balls[i].velX);
-                        //balls[i].velY = - (balls[i].velY);
+                        balls[i].velX = -(balls[i].velX);
+                        balls[i].velY = - (balls[i].velY);
                         break;
                     default:
                         console.error(new Error("ballCollisionType is unknown value. Resetting to 0..."));
