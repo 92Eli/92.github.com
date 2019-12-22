@@ -53,9 +53,9 @@ Ball.prototype.ballCollisionDetect = function() { // check for ball collisions
                     case 0:
                         break;
                     case 1:
-                        //let hold = balls[i].color; // save the current color because we're going to...
-                        //[i].color = this.color; // make the current ball become the checked ball's color
-                        this.color = balls[i].color; // set this color to the other ball's old color
+                        let hold = balls[i].color; // save the current color because we're going to...
+                        balls[i].color = this.color; // make the current ball become the checked ball's color
+                        this.color = hold; // set this color to the other ball's old color
                         break;
                     case 2:
                         balls[i].color = this.color; // give your color
