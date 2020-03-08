@@ -1,0 +1,55 @@
+<!doctype HTML>
+<head>
+	<meta charset="utf-8">
+	<title>LocalStorage Test</title>
+</head>
+<body>
+	<p style="border: 2px double black; width: 400px;">Open dev tools > Application > Storage > Local Storage or Session Storage too see how things are saved.</p>
+	
+	<h2 style="margin: 1em 0px 0px 0px;">Session Storage</h2>
+	<h4 style="margin: 0px 0px 1em 0px;">(will be cleared on page close)</h4>
+	<p id="ss-click-me" style="text-decoration: underline;">You have never clicked this.</p>
+	<button id="ss-clicker-button">Clear</button>
+	<hr>
+	<h2 style="margin: 1em 0px 0px 0px;">Local Storage</h2>
+	<h4 style="margin: 0px 0px 1em 0px;">(will be cleared only through JS/clear browser cache)</h4>
+	<p id="ls-click-me" style="text-decoration: underline;">You have never clicked this.</p>
+	<button id="ls-clicker-button">Clear</button>
+	
+	<script>
+		var SSclickMe = document.getElementById("ss-click-me");
+		var SSclearButton = document.getElementById("ss-clicker-button");
+		var LSclickMe = document.getElementById("ls-click-me");
+		var LSclearButton = document.getElementById("ls-clicker-button");
+		
+		var storeAnItem = function() {
+			SSclickMe.style.color = "blue";
+			sessionStorage.setItem("haveClicked", "true");
+		};
+		var deleteAnItem = function() {
+			SSclickMe.style.color = "red";
+			sessionStorage.removeItem("haveClicked");
+		};
+		
+		if (sessionStorage.getItem("haveClicked") === "true") {
+			SSclickMe.style.color = "green";
+			SSclickMe.innerHTML = "You have clicked this before!";
+		};
+		if (localStorage.getItem("haveClicked") === "true") {
+			LSclickMe.style.color = "green";
+			LSclickMe.innerHTML = "You have clicked this before!";
+		};
+		
+		SSclickMe.addEventListener("click", storeAnItem);
+		SSclearButton.addEventListener("click", deleteAnItem);
+		
+		LSclickMe.addEventListener("click", function() {
+			LSclickMe.style.color = "blue";
+			localStorage.setItem("haveClicked", "true");
+		});
+		LSclearButton.addEventListener("click", function() {
+			LSclickMe.style.color = "red";
+			localStorage.removeItem("haveClicked", "true");
+		});
+	</script>
+</body>
