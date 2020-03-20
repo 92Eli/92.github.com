@@ -1,0 +1,769 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>MadLibber 4.2</title>
+	<style>
+        body {
+            background-color: #23ff3b;
+            position: absolute;
+            left: 12.5%;
+            width: 75%;
+            text-align: center;
+        }
+        p {
+            color: #00730d;
+        }
+		header p {
+			color: #606060;
+			margin-top: -25px;
+			font-size: 0.75em;
+		}
+        button {
+            margin: 5px;
+            font-size: 25px;
+            color: #00730d;
+            transition: all 0.4s ease;
+            background-color: #23ff3b;
+            border: 2px solid #00730d;
+            border-radius: 15px;
+            padding: 5px;
+        }
+        button:hover {
+            background-color: #00730d;
+            /*border-color: #23ff3b;*/
+            color: #23ff3b;
+        }
+        input {
+			font-size: 20px;
+            color: #fc9d03; /* please change this it burns my eyes*/
+            width: 350px;
+            height: 40px;
+            background-color: #1BBF2E;
+			border: none;
+            border-bottom: 5px solid #ffffff;
+			outline: none;
+			resize: none;
+        }
+		::placeholder {
+			color: #007E0F;
+		}
+		::-ms-input-placeholder {
+			color: #007E0F;
+		}
+		::-webkit-input-placeholder {
+			color: #007E0F;
+		}
+        #input-text {
+            font-size: 4em;
+            margin: 5px;
+        }
+		#notice {
+            font-size: 3em;
+			color: red;
+		}
+		.theClassyClass {
+			border-color: #fc9d03;
+			/*text-decoration: underline dashed red;*/
+		}
+        #listCustomStories {
+            display: block;
+        }
+        #create-button {
+            margin-top: 2em;
+            background-color: #FF5050;
+        }
+        #create-button:hover {
+            background-color: blue;
+        }
+        .createYourStoryField {
+            width: inherit;
+            height: inherit;
+            color: inherit;
+            background-color: #FFFFFF;
+			border: 2px solid #000000;
+        }
+        .createYourStoryField::placeholder {
+			color: #707070;
+		}
+		.createYourStoryField::-ms-input-placeholder {
+			color: #707070;
+		}
+		.createYourStoryField::-webkit-input-placeholder {
+			color: #707070;
+		}
+        .editorButtons {
+            color: #b3b3b3;
+            background-color: #555555;
+            border: 2px solid #00730d;
+            border-radius: 5px;
+            /*transition: background-color 0.4s ease; -- already done from button transition*/
+        }
+        .editorButtons:hover {
+            background-color: #777777;
+            color: #b3b3b3; /* Maintain color because transition is all*/
+        }
+        .codeWords {
+            background-color: #b3b3b3;
+            border-radius: 2px;
+            font-family: monospace;
+        }
+		.killSwitch {
+			margin-top: 2em;
+			background-color: #3F3F3F;
+			color: #AFAFAF;
+		}
+		.killSwitch:hover {
+            background-color: #3F3F3F; /* Maintain color because transition is all*/
+			color: #FFFFFF;
+		}
+		#game-label {
+			display: inline;
+		}
+		#currGame {
+			display: inline;
+			color: #B90000;
+		}
+		#deleteCustomStory {
+			display: inline;
+			color: #0000EE;
+			text-decoration: underline;
+			cursor: pointer;
+		}
+	</style>
+    <link rel="icon" type="image/png" href="/92eli_logo_crop_square.png">
+    <link rel="stylesheet" type="text/css" href="92eli-header-footer-format.css">
+</head>
+<body>
+<header>
+	<ul id="navigator">
+	<img src="92eli_logo_crop.png" alt="92Eli" height="45px" style="padding: 0 25px 0 25px;">
+	<li><a href="" id="current-page">Home</a></li>
+	<li><a href="Elijah_Mock_resume.pdf">Resume</a></li>
+	<li class="dropdown-holder"><a href="#">JavaScript Tests</a>
+	<div class="dropdown-content">
+		<a href="Notification%20Test.html">Notification Test</a>
+		<a href="Vibration%20Test.html">Vibration Test</a>
+		<a href="Cookie%20test.html">Cookie Test</a>
+		<a href="HTTP-Request-Test.html">HTTP Request Test</a>
+		<a href="LocalStorageTest.html">LocalStorage Test</a>
+	</div></li>
+	<li><a href="contact-me.html">Contact Me</a></li>
+	<li><a href="JS-warmup.html">JS Warm-up</a></li>
+	<li class="dropdown-holder"><a>Projects</a>
+	<div class="dropdown-content">
+		<a href="ballsbounceproj/bouncing-page.html">Balls Bounce Project</a>
+		<a href="MadLibber.html">MadLibber</a>
+		<a href="https://dev.92spoons.com">92Dev site</a>
+	</div></li>
+	</ul>
+</header>
+<div id="body-text">
+	<noscript>Sorry, it looks like you don't have JavaScript enabled. JavaScript is required for this game to work. <a href="https://www.enable-javascript.com/" target="_blank" rel="noopener">How to enable JavaScript</a></noscript>
+	
+	<header>
+    <h1>MadLibber</h1>
+	<p>Release 4.2</p>
+	</header>
+    <p id="loading-notice">Loading...</p>
+	<div id="listOfStories" style="display: none;"></div>
+    <div id="listCustomStories" style="display: none;"><button id="create-button">+ Create New Story</button></div>
+	<div id="game-label">Currently playing: <div id="currGame"></div> <div id="deleteCustomStory" onClick="deleteCurrStory()">[Delete]</div></div>
+	<div id="input-wrapper">
+		<p id="input-text">Enter a <strong id="type-to-enter"></strong></p>
+		<input type="text" autoFocus="true" id="userInput" required="true">
+		<button id="submit-button">Next</button>
+		<p id="notice"></p>
+	</div>
+	<p id="output"></p>
+	<button id="restart" style="display: none;">Restart</button>
+</div>
+
+<footer>
+	<p>Proudly open-sourced by Elijah Mock • <a href="https://github.com/92Eli/">92Eli on GitHub</a> • <a href="http://92spoons.com">Linked site - 92spoons.com</a></p>
+	<p>Be the reason someone smiles today.</p>
+	<p>Last updated 3/20/2020 (in theory) • Have patience, rennovation of this site in progress</p>
+	<p><a href="#">Back to top</a></p>
+</footer>
+    <script>
+		/**TODOS
+		 * Implement keyboard navigation to custom stories
+         * Make createYourStoryField => createYourStoryTextarea
+         *
+         * Public PHP DB of stories?
+		**/
+		var mainBody = document.getElementById("body-text"); // replaces normal document.body
+        var wordsEntered = [];
+        var userInput = document.getElementById("userInput");
+        var submitButton = document.getElementById("submit-button");
+		var partOfSpeech = document.getElementById("type-to-enter");
+		var notice = document.getElementById("notice");
+		var output = document.getElementById("output");
+		var inputWrapper = document.getElementById("input-wrapper");
+		var restartButton = document.getElementById("restart");
+		var divBox = document.getElementById("listOfStories");
+        var customStories = document.getElementById("listCustomStories");
+		var killSwitch = document.createElement("button");
+		var currGameEl = document.getElementById("currGame");
+		var gameLabel = document.getElementById("game-label");
+		var storyDivider = "%fs#8)F{fsd"; // it's just to separate localStorage items
+		
+        var selection = -1;
+		var currScene = -1;
+        var storyBeingRead = 0; // 0th story
+        var recentStoryIndex = 0;
+        var playingCustomStory = false;
+		var tempStory = "";
+        
+        /* STORIES */
+		// note cannot have ] in the story title
+        var story1 = "[title:A Christmas Story]One day, you got a [noun] for Christmas! You loved it so much that you just want to [verb] it."; // could store these in a seperate file
+        var theStoryOfMyLife = "[title:The Story Of My Life]*dies*";
+		var storyIFoundOnline = "[Title:Deepest apologies]Dear Mrs. [name], I am truly [adj] for disrupting yeserday's class on the native customs of the [noun] tribes of the [+place]. It was rude of me to [verb] when you explained that the tribal chief wore a [adj] headpiece in the shape of a winged [noun] on his [+body part]. And my decision to [verb] in a circle was very innappropriate—even though I was only trying to mimic the [adj] native dance. I understand there's a time and a place for that kind of [noun]—and your class was not it. I know that you [verb] very hard as a teacher and deserve respect for teaching me and my fellow [plnoun] every day. I hope you accept my sincere [noun] and believe I will never excersise such [adj] judgement again. Sincerely, [name]";
+        // Master collection of stories -- index them here!
+        var storyColl = [story1, theStoryOfMyLife, storyIFoundOnline];
+        var customStoryColl = [];
+        
+        // KEY [noun] [plnoun=plural noun] [name] [verb] [pverb=past tense verb] [adj]
+        var supportedBreaks = ["noun", "plnoun", "name", "verb", "pverb", "adj", "adjective"];
+        
+        
+        // format each story from text to an object
+        for (var i = 0; i < storyColl.length; i++) {
+            storyColl[i] = formatStory(storyColl[i]);
+        }
+        // cut up and format the stories
+        for (var k = 0; k < storyColl.length; k++) {
+            loadStory(storyColl[k]);
+        }
+        
+        
+        /* WORD LISTS */
+        var nounList = ["client", "town", "drawing", "payment", "courage", "clothing", "bath", "instruction", "lake", "drawer", "keyboard"]; // I mean, we could put these in a seperate file...
+        var verbList = ["eat", "hurt", "bite", "scream", "travel", "make", "cut", "explode", "arrive", "watch"];
+		var nameList = ["Joe",  "John", "Jim", "Jimmy", "Fred", "Greg"];
+        var pverbList = ["ate", "hurt", "bit", "screamed", "traveled", "made", "cut", "exploded", "arrived", "watched", "railroaded"];
+        var adjList = ["smelly", "atrocious", "envious", "delighted", "morose", "depressed", "hungry", "effervescing"];
+		
+        var getRandomWord = function(typeOfWord) {
+            if (typeOfWord === "noun") {
+                // I wish there was a way to access a random word, like from
+                // https://randomwordgenerator.com/noun.php
+                var randNounNum = Math.floor(Math.random() * Math.floor(nounList.length));
+                return nounList[randNounNum];
+            } else if (typeOfWord === "verb") {
+                var randNounNum = Math.floor(Math.random() * Math.floor(nounList.length));
+                return nounList[randNounNum]+"s";
+            } else if (typeOfWord === "verb") {
+                var randVerbNum = Math.floor(Math.random() * Math.floor(verbList.length));
+                return verbList[randVerbNum];
+            } else if (typeOfWord === "name") {
+                var randNameNum = Math.floor(Math.random() * Math.floor(nameList.length));
+                return nameList[randNameNum];
+            } else if (typeOfWord === "pverb") {
+                var randPverbNum = Math.floor(Math.random() * Math.floor(pverbList.length));
+                return pverbList[randPverbNum];
+            } else if (typeOfWord === "adj" || typeOfWord === "adjective") {
+                var randAdjNum = Math.floor(Math.random() * Math.floor(adjList.length));
+                return adjList[randAdjNum];
+            } else {
+                return ""; // else no hint -- the typeOfWord is custom
+            }
+        };
+        
+		var setScene = function(scene) {
+			userInput.value = ""; // clear the input
+			if (scene === -1) { // story selection
+				inputWrapper.style.display = "none"; // hide the bodies
+				restartButton.style.display = "none";
+				gameLabel.style.display = "none";
+				
+				output.style.display = "none";
+				divBox.style.display = "initial"; // show the stories
+                customStories.style.display = "block";
+                killSwitch.style.display = "initial"; // show the delete all button
+				
+				selection = -1; // default to not initialized
+				document.addEventListener("keydown", navigation); // enable navigation with keyboard
+                
+                
+                if (typeof customStories.children[recentStoryIndex] === "undefined" && customStoryColl.length >= recentStoryIndex) { // if the button has not been made and there should be one
+                    //&& customStories.children[recentStoryIndex].id !== "create-button"
+                    console.log("LOADING CSTORY");
+                    loadNewCustomStory(); // Run ONLY if the latest story is not there
+                } // maybe make it a while loop to update multiple?
+				
+			} if (scene === 0) {
+				// clean up, clean up, everybody everywhere...
+				inputWrapper.style.display = "initial";
+				restartButton.style.display = "none";
+				gameLabel.style.display = "initial";
+				output.style.display = "block";
+				output.textContent = "";
+				for (var i = 0; i < divBox.children.length; i++) {
+					divBox.children[i].className = divBox.children[i].className.replace(/(?:^|\s)theClassyClass(?!\S)/g, ''); // remove theClassyClass from className array -- I borrowed the regex I'm no good at that
+				} // remove theClassyClass of stories if they are there
+                for (var i = 0; i < customStories.children.length; i++) {
+                    customStories.children[i].className = customStories.children[i].className.replace(/(?:^|\s)theClassyClass(?!\S)/g, '');
+                } // same for the customStories
+				wordsEntered = [];
+				
+				if (playingCustomStory) {
+					// typeof storyBeingRead === "string" && [might need -- can't substring error]
+					if (storyBeingRead.substring(0,1) === "C") { // if the "C" label is still there,
+						storyBeingRead = storyBeingRead.substring(1); // cut off "C"
+					}
+					currGameEl.textContent = customStoryColl[storyBeingRead].readableName;
+					document.getElementById("deleteCustomStory").style.display = "initial";
+				} else {
+					currGameEl.textContent = storyColl[storyBeingRead].readableName;
+					document.getElementById("deleteCustomStory").style.display = "none";
+				}
+				
+				currScene++; // moving along...
+				setScene(1);
+			} else if (playingCustomStory) {
+                
+                if (scene <= customStoryColl[storyBeingRead].need.length) {
+                    userInput.focus(); // focus in the text field
+
+
+                    if (customStoryColl[storyBeingRead].need[scene-1] === "adj") { // custom text output
+                        partOfSpeech.textContent = "adjective";
+                    } else if (customStoryColl[storyBeingRead].need[scene-1] === "pverb") { // custom text output
+                        partOfSpeech.textContent = "past tense verb";
+                    } else if (customStoryColl[storyBeingRead].need[scene-1] === "plnoun") {
+                        partOfSpeech.textContent = "plural noun";
+                    } else {
+                        partOfSpeech.textContent = customStoryColl[storyBeingRead].need[scene-1]; // scene starts at 1 for the story
+                    }
+                    userInput.placeholder = getRandomWord(customStoryColl[storyBeingRead].need[scene-1]);
+                } else {
+                    // Display result with message
+                    for (var i = 0; i < wordsEntered.length; i++) {
+                        output.textContent += customStoryColl[storyBeingRead].other[i];
+                        output.textContent += wordsEntered[i];
+                    }
+                    // need the ending since .other should be 1 longer
+                    output.textContent += customStoryColl[storyBeingRead].other[customStoryColl[storyBeingRead].other.length-1];
+
+                    // Clear the playing field!
+                    inputWrapper.style.display = "none";
+
+                    // and we toss!
+                    restartButton.style.display = "initial";
+                    restartButton.addEventListener("click", function(){
+                        playingCustomStory = false;
+                        currScene = -1;
+                        setScene(currScene);
+                        });
+                    window.addEventListener("keydown", backToMenuPress);
+                }
+            } else if (scene <= storyColl[storyBeingRead].need.length) {
+                userInput.focus(); // focus in the text field
+                
+                
+                if (storyColl[storyBeingRead].need[scene-1] === "adj") { // custom text output
+                    partOfSpeech.textContent = "adjective";
+                } else if (storyColl[storyBeingRead].need[scene-1] === "pverb") { // custom text output
+                    partOfSpeech.textContent = "past tense verb";
+                } else if (storyColl[storyBeingRead].need[scene-1] === "plnoun") {
+					partOfSpeech.textContent = "plural noun";
+				} else {
+                    partOfSpeech.textContent = storyColl[storyBeingRead].need[scene-1]; // scene starts at 1 for the story
+                }
+                userInput.placeholder = getRandomWord(storyColl[storyBeingRead].need[scene-1]);
+            } else {
+				/*// Hooray! The end! Display the result...
+				for (var i = 0; i < wordsEntered.length; i++) {
+					output.textContent += wordsEntered[i];
+					if (i !== wordsEntered.length - 1) {
+						output.textContent += " ";
+					} else {
+						output.textContent += ".";
+					}
+				}*/
+                // Display result with message
+                for (var i = 0; i < wordsEntered.length; i++) {
+                    output.textContent += storyColl[storyBeingRead].other[i];
+                    output.textContent += wordsEntered[i];
+                }
+                // need the ending since .other should be 1 longer
+                output.textContent += storyColl[storyBeingRead].other[storyColl[storyBeingRead].other.length-1];
+                
+				// Clear the playing field!
+				inputWrapper.style.display = "none";
+				
+				// and we toss!
+				restartButton.style.display = "initial";
+				restartButton.addEventListener("click", function(){
+					currScene = -1;
+					setScene(currScene);
+					});
+				window.addEventListener("keydown", backToMenuPress);
+			}
+		};
+        function loadStory(story) {
+            // break up the current story
+            var thisStory = story;
+            var cutUpStory = thisStory.fullText.split("[");
+            for (var i = 0; i < cutUpStory.length; i++) { // iterate through the segments after "["
+                var somethingAdded = false;
+                for (var j = 0; j < supportedBreaks.length; j++) { // check for words to break on
+                    var chunk = cutUpStory[i].substring(0, supportedBreaks[j].length).toLowerCase(); // not including "]"
+                    if (chunk+cutUpStory[i].substring(supportedBreaks[j].length, supportedBreaks[j].length+1) === supportedBreaks[j]+"]") { // if first few chars are [supportedBreak]
+                        // remove text from cutUpStory string
+                        cutUpStory[i] = cutUpStory[i].substring(supportedBreaks[j].length+1); // +1 includes "]"
+                        // add to need list
+                        thisStory.need.push(chunk);
+                        somethingAdded = true;
+                        break; // stop the j loop since we found a match
+                    }
+                }
+                if (cutUpStory[i].substring(0, 1) === "+") { // if there is an added type
+                    thisStory.need.push(cutUpStory[i].substring(1, cutUpStory[i].indexOf("]"))); // add to list
+                    cutUpStory[i] = cutUpStory[i].substring(cutUpStory[i].indexOf("]")+1); // remove from text
+                    somethingAdded = true;
+                }
+
+                if (!somethingAdded && i !== 0) { // 0th item never had a bracket
+                    //cutUpStory[i] = "[" + cutUpStory[i]; // no match? readd the bracket
+
+                    cutUpStory[i-1] = cutUpStory[i-1] + "[" + cutUpStory[i]; // no match? readd the bracket and replace previous thing
+                    cutUpStory.splice(i,1); // remove text because it is with previous element
+                    i--; // now we have to do this again for the index because we deleted it
+                }
+
+                thisStory.other[i] = cutUpStory[i];
+            }
+            thisStory.need.shift(); // delete story3.need[0] because it is blank...
+            console.log("Story:",thisStory);
+
+            //storyColl[k] = thisStory;
+        }
+        function formatStory(storyTxt) {
+            if (storyTxt.substring(0, 7).toLowerCase() === "[title:") {
+                var getTitle = storyTxt.split("]");
+                titleTemp = getTitle[0].substring(7); // gets the stuff before the bracket but after the title heading
+                storyTxt = getTitle[1];
+                for (var i = 2; i < getTitle.length; i++) {
+                    storyTxt += "]"; // need to readd bracket if there is another piece
+                    storyTxt += getTitle[i];
+                }
+            } else {
+                var titleTemp = "Unnamed Story";
+            }
+            var temp = {
+                readableName: titleTemp,
+                fullText: storyTxt,
+                need: [""],
+                other: [""]
+            };
+            return temp;
+        }
+		/*function setStoryToRead(storyNum) {
+			storyBeingRead = storyNum;
+			setScene(1); // maybe should be 0
+		}*/
+        function createCustomStory() {
+            currScene = -2; // so things don't get confused
+            
+            // wipe it
+			divBox.style.display = "none";
+            customStories.style.display = "none";
+			killSwitch.style.display = "none";
+            var titleField = document.createElement("input"); // ** CANNOT HAVE ] IN THE TITLE! WILL CLOSE THE [title:] CLAUSE
+            titleField.className += "createYourStoryField";
+            titleField.placeholder = "Story Title";
+            mainBody.insertBefore(titleField, output);
+            var createYourStoryField = document.createElement("input");
+            createYourStoryField.className += "createYourStoryField";
+            createYourStoryField.placeholder = "Enter your story here...";
+            //var createYourStoryTextarea = document.createElement("textarea");
+            //mainBody.appendChild(createYourStoryTextarea);
+			if (tempStory != "") { // if there is an unsaved temporary story
+				createYourStoryField.value = tempStory;
+			}
+            mainBody.insertBefore(createYourStoryField, output);
+            createYourStoryField.focus(); // FOCUS
+            // https://stackoverflow.com/a/43488899 -- dynamically adjust height
+            
+            
+            var submitButtonCS = document.createElement("button"); // submitButton is global -- this reduces confusion
+            var homeButton = document.createElement("button");
+            var buttonHolder = document.createElement("div");
+            var helpTxt = document.createElement("p");
+            submitButtonCS.textContent ="Save";
+            homeButton.textContent = "Back";
+            submitButtonCS.className = "editorButtons";
+            homeButton.className = "editorButtons";
+            helpTxt.innerHTML = "To create a custom MadLib, type your story and then put [wordtype] when you want the user to input a word.<br>Supported word types:"; // have to edit innerHTML so I can add <br> tags
+            for (var i = 0; i < supportedBreaks.length; i++) {
+                helpTxt.innerHTML += " <span class=\"codeWords\">[" + supportedBreaks[i] + "]"
+                helpTxt.innerHTML += "</span>";
+                if (supportedBreaks[i] === "plnoun") {
+                    helpTxt.innerHTML += "=plural noun";
+                } else if (supportedBreaks[i] === "pverb") {
+                    helpTxt.innerHTML += "=past tense verb";
+                }
+            }
+            helpTxt.innerHTML += "<br>You can also have the user input another thing by putting <span class=\"codeWords\">[+Text to be displayed]</span>. This would prompt the user, \"Enter a Text to be displayed\".";
+            helpTxt.style.color = "#2F0D80"; // #402306
+            
+            submitButtonCS.addEventListener("click", function(){
+                output.style.display = "initial"; // show
+				output.textContent = "Saved to this device.";
+			});
+            homeButton.addEventListener("click", function(){
+				if (output.style.display === "initial") { // if need to save
+					if (titleField.value !== "") {
+						customStoryColl[recentStoryIndex] = "[title:" + titleField.value + "]" + createYourStoryField.value;
+                        addLocalStorageStory("[title:" + titleField.value + "]" + createYourStoryField.value); // save it to localStorage
+					} else {
+						customStoryColl[recentStoryIndex] = createYourStoryField.value;
+                        addLocalStorageStory(createYourStoryField.value); // save it to localStorage without title
+					}
+					tempStory = ""; // saved, so no temp
+				} else {
+				//if (customStoryColl[recentStoryIndex] !== createYourStoryField.value) { // if unsaved
+					tempStory = createYourStoryField.value; // save as temp
+				}
+				
+                mainBody.removeChild(buttonHolder);
+                mainBody.removeChild(createYourStoryField);
+                mainBody.removeChild(titleField);
+                mainBody.removeChild(helpTxt);
+                
+                if (customStoryColl[recentStoryIndex] != null) { // if pressed save
+                    customStoryColl[recentStoryIndex] = formatStory(customStoryColl[recentStoryIndex]); // save as object
+                    loadStory(customStoryColl[recentStoryIndex]); // this one's destructive
+                    recentStoryIndex++; // new story next time
+                }
+                
+                
+				currScene = -1; // do this after load
+				setScene(currScene);
+			});
+            // also enter key event listener to go home
+            
+            buttonHolder.appendChild(homeButton);
+            buttonHolder.appendChild(submitButtonCS);
+            mainBody.insertBefore(buttonHolder, output);
+            mainBody.insertBefore(helpTxt, createYourStoryField);
+            
+            // note -- do not remove the listener because later you can get back to it
+        }
+		
+		function loadLocalStorageStories() {
+            if (localStorage.getItem("CStories") !== null) { // if defined
+                var lsStories = localStorage.getItem("CStories").split(storyDivider);
+                for (var i = 0; i < lsStories.length; i++) {
+                    // load, format, etc
+                    lsStories[i] = formatStory(lsStories[i]);
+                    loadStory(lsStories[i]);
+                    customStoryColl[recentStoryIndex] = lsStories[i];
+                    recentStoryIndex++;
+                    loadNewCustomStory();
+                }
+
+                //recentStoryIndex = lsStories.length; // should have already happened from recentStoryIndex++
+            }
+		}
+		function addLocalStorageStory(storyAsString) {
+            if (localStorage.getItem("CStories") !== null) { // if previously set
+                localStorage.setItem("CStories", localStorage.getItem("CStories") + storyDivider + storyAsString);
+            } else {
+                localStorage.setItem("CStories", storyAsString);
+            }
+            //console.log("LOCALSTORAGE:", localStorage.getItem("CStories"));
+		}
+		function deleteCurrStory() {
+			// delete from customStoryColl
+            customStoryColl.splice(storyBeingRead, 1); // delete the 1 item
+			//customStoryColl[storyBeingRead] = ""; // null the story but DO NOT DELETE IT so that the ids of the buttons line up
+            // won't work: can not be NULLED because the checker will recreate another button
+            // delete from localStorage
+            var lsArray = localStorage.getItem("CStories").split(storyDivider);
+            lsArray.splice(storyBeingRead, 1); // remove current one
+            var newLs;
+            for (var i = 0; i < lsArray.length; i++) { // rebuild the array
+                if (i == 0) {
+                    newLs = lsArray[i];
+                    continue; // first one doesn't need a divider
+                }
+                newLs += storyDivider + lsArray[i];
+            }
+            if (lsArray.length == 0) { // if there's nothing left (the loop didn't run)
+                localStorage.removeItem("CStories");
+            } else {
+                localStorage.setItem("CStories", newLs);
+            }
+			// delete from DOM
+            //customStories.removeChild(customStories.children[storyBeingRead+1]); // +1 for the create button
+            for (var i = 0; i < customStories.children.length; i++) {
+                var testChild = customStories.children[i];
+                if (testChild.id == "CUSTOMSTORY" + storyBeingRead) {
+                    console.log("Deleting:", testChild);
+                    customStories.removeChild(testChild);
+                    break; // child deleted so no need to do anything else
+                }
+            }
+            editCustomStoryIds(); // fix the ids now that the customStoryColl and customStories was updated
+            // return home
+            playingCustomStory = false;
+            currScene = -1;
+            setScene(currScene);
+		}
+		function wipeAllStories() {
+			// Delete LS
+            localStorage.removeItem("CStories");
+            // Reset customStoryColl
+            recentStoryIndex = 0;
+            customStoryColl = []; // reset customStoryColl
+            // Remove all from DOM
+            var i;
+            while (i = customStories.lastElementChild) {
+                // Delete the children
+                if (i.id === "create-button") break; // don't delete the create button! -- break out of loop because you have reached the end
+                console.log("Deleting:",i);
+                customStories.removeChild(i);
+                if (typeof i == undefined) break; // just in case the loop keeps looping
+            }
+
+            console.log("DELETED ALL CUSTOM STORIES per user.");
+		}
+		
+		function backToMenuPress(e) {
+			if (e.keyCode === 13 && e.srcElement !== userInput) { // check for ENTER and NOT IN INPUT (avoids skipping immediately)
+				currScene = -1;
+				setScene(currScene);
+				window.removeEventListener("keydown", backToMenuPress);
+			}
+		}
+        var captureUserData = function() {
+			if (userInput.value !== "") {
+				wordsEntered.push(userInput.value);
+				notice.textContent = "";
+				currScene++;
+				setScene(currScene);
+			} else {
+				notice.textContent = "Please enter a value into the box.";
+                userInput.focus(); // refocus in case they clicked the button
+			}
+        };
+		function loadMenu() {
+            // runs ONCE
+			for (var i = 0; i < storyColl.length; i++) {
+				var storyButton = document.createElement("button");
+				storyButton.textContent = storyColl[i].readableName;
+				storyButton.id = "STORY"+i; // set the id so we know which it is later
+				storyButton.addEventListener("click", function() {
+					var number = this.id.slice(5); // cut off STORY prefix of id
+					storyBeingRead = number;
+                    playingCustomStory = false;
+					divBox.style.display = "none";
+                    customStories.style.display = "none";
+                    killSwitch.style.display = "none";
+					currScene = 0;
+					setScene(currScene); // start setup
+				});
+				divBox.appendChild(storyButton);
+			}
+            document.getElementById("create-button").addEventListener("click", createCustomStory);
+            loadLocalStorageStories();
+			
+			killSwitch.className = "killSwitch";
+			killSwitch.textContent = "Delete all custom stories";
+			killSwitch.addEventListener("click", function() {
+				if (confirm("Are you sure you want to delete all custom stories? This is irreversable!")) {
+					wipeAllStories();
+					
+				}
+			});
+			restartButton.parentNode.insertBefore(killSwitch, restartButton.nextSibling); // customStories.parentNode.nextSibling
+			
+            mainBody.removeChild(document.getElementById("loading-notice"));
+			console.log("Loaded.");
+			this.removeEventListener("click", loadMenu); // deletirse
+		}
+        function loadNewCustomStory() {
+            // assume only 1 new story for now -- could change to detect what is already there
+            // use recentStoryIndex-1 because it increments as soon as you click back
+            if (customStoryColl[recentStoryIndex-1] != undefined) { // if something is there
+                var customStoryButton = document.createElement("button");
+                customStoryButton.textContent = customStoryColl[recentStoryIndex-1].readableName;
+                customStoryButton.id = "CUSTOMSTORY"+(recentStoryIndex-1); // set the id so we know which it is in the event listener
+                customStoryButton.addEventListener("click", function() {
+                    var number = this.id.slice(11); // cut off CUSTOMSTORY prefix of id
+                    storyBeingRead = "C"+number;
+                    playingCustomStory = true;
+                    divBox.style.display = "none";
+                    customStories.style.display = "none";
+                    killSwitch.style.display = "none";
+                    currScene = 0;
+                    setScene(currScene); // start setup
+                });
+                customStories.appendChild(customStoryButton);
+            }
+        }
+        function editCustomStoryIds() {
+            for (var i = 1; i < customStories.children.length; i++) {// start at 1 because customStories.children[0] is the create button and not included
+                var customStoryButton = customStories.children[i];
+                // this just assumes that the ids were shifted by something deleted, and does not check for the titles to match up
+                // this is not a perfect method because the customStoryColl might have moved the indexes around
+                customStoryButton.id = "CUSTOMSTORY" + (i-1); // (i+1) is because i starts at 1 to account for the create button
+            }
+        }
+		
+		function navigation(e) { // to be called to navigate the menus with keyboard
+			function highlightSelected() {
+				for (var i = 0; i < divBox.children.length; i++) {
+					divBox.children[i].className = divBox.children[i].className.replace(/(?:^|\s)theClassyClass(?!\S)/g, ''); // remove theClassyClass from className array -- I borrowed the regex I'm no good at that
+				} // classList.add() and classList.remove() are less browser compatable
+				//divBox.children[selection].classList.add("theClassyClass");
+				if (divBox.children[selection].className.indexOf("theClassyClass") <= -1) {
+					divBox.children[selection].className += " theClassyClass"; // browser compatible(IE)
+				}// else class is already applied
+			}
+            
+			if (currScene === -1) { // menu
+                if (e.keyCode === 37) { // <
+                    if (selection === -1) { // if not initialized
+                        selection = storyColl.length-1; // set to last item
+                    } else if (selection >= 1) { // only move down if you can
+                        selection--;
+                    }
+                    highlightSelected();
+                } else if (e.keyCode === 39) { // >
+                    if (selection <= storyColl.length-2) { // only move up if you can
+                        selection++;
+                    }
+                    highlightSelected();
+                } else if (e.keyCode === 13) { // ENTER
+                    if (selection >= 0 && selection <= storyColl.length-1) { // if something is picked
+                        storyBeingRead = selection;
+                        divBox.style.display = "none";
+                        customStories.style.display = "none";
+                        killSwitch.style.display = "none";
+                        currScene = 0;
+                        setScene(currScene);
+                        this.removeEventListener("keydown", navigation); // removes the listener because something was selected
+                    }
+                }
+            }
+        }
+        
+		//document.addEventListener("beforeunload", loadMenu);
+        loadMenu();
+        submitButton.addEventListener("click", captureUserData);
+        userInput.addEventListener("keydown", function(e) {
+            if (e.keyCode === 13) { // enterkey
+				captureUserData(); // add the captureUserData listener globally because it only works in the user input anyways
+			} else if (e.keyCode === 27) { // escapekey
+                currScene = -1;
+                setScene(currScene);
+            }
+        });
+        
+		setScene(currScene); // initialize the scene to story selection
+    </script>
+</body>
