@@ -130,39 +130,13 @@
 			cursor: pointer;
 		}
 	</style>
-    <link rel="icon" type="image/png" href="/92eli_logo_crop_square.png">
-    <link rel="stylesheet" type="text/css" href="92eli-header-footer-format.css">
 </head>
 <body>
-<header>
-	<ul id="navigator">
-	<img src="92eli_logo_crop.png" alt="92Eli" height="45px" style="padding: 0 25px 0 25px;">
-	<li><a href="" id="current-page">Home</a></li>
-	<li><a href="Elijah_Mock_resume.pdf">Resume</a></li>
-	<li class="dropdown-holder"><a href="#">JavaScript Tests</a>
-	<div class="dropdown-content">
-		<a href="Notification%20Test.html">Notification Test</a>
-		<a href="Vibration%20Test.html">Vibration Test</a>
-		<a href="Cookie%20test.html">Cookie Test</a>
-		<a href="HTTP-Request-Test.html">HTTP Request Test</a>
-		<a href="LocalStorageTest.html">LocalStorage Test</a>
-	</div></li>
-	<li><a href="contact-me.html">Contact Me</a></li>
-	<li><a href="JS-warmup.html">JS Warm-up</a></li>
-	<li class="dropdown-holder"><a>Projects</a>
-	<div class="dropdown-content">
-		<a href="ballsbounceproj/bouncing-page.html">Balls Bounce Project</a>
-		<a href="MadLibber.html">MadLibber</a>
-		<a href="https://dev.92spoons.com">92Dev site</a>
-	</div></li>
-	</ul>
-</header>
-<div id="body-text">
 	<noscript>Sorry, it looks like you don't have JavaScript enabled. JavaScript is required for this game to work. <a href="https://www.enable-javascript.com/" target="_blank" rel="noopener">How to enable JavaScript</a></noscript>
 	
 	<header>
     <h1>MadLibber</h1>
-	<p>Release 4.2</p>
+	<p>4.2</p>
 	</header>
     <p id="loading-notice">Loading...</p>
 	<div id="listOfStories" style="display: none;"></div>
@@ -176,14 +150,6 @@
 	</div>
 	<p id="output"></p>
 	<button id="restart" style="display: none;">Restart</button>
-</div>
-
-<footer>
-	<p>Proudly open-sourced by Elijah Mock • <a href="https://github.com/92Eli/">92Eli on GitHub</a> • <a href="http://92spoons.com">Linked site - 92spoons.com</a></p>
-	<p>Be the reason someone smiles today.</p>
-	<p>Last updated 3/20/2020 (in theory) • Have patience, rennovation of this site in progress</p>
-	<p><a href="#">Back to top</a></p>
-</footer>
     <script>
 		/**TODOS
 		 * Implement keyboard navigation to custom stories
@@ -191,7 +157,6 @@
          *
          * Public PHP DB of stories?
 		**/
-		var mainBody = document.getElementById("body-text"); // replaces normal document.body
         var wordsEntered = [];
         var userInput = document.getElementById("userInput");
         var submitButton = document.getElementById("submit-button");
@@ -474,16 +439,16 @@
             var titleField = document.createElement("input"); // ** CANNOT HAVE ] IN THE TITLE! WILL CLOSE THE [title:] CLAUSE
             titleField.className += "createYourStoryField";
             titleField.placeholder = "Story Title";
-            mainBody.insertBefore(titleField, output);
+            document.body.insertBefore(titleField, output);
             var createYourStoryField = document.createElement("input");
             createYourStoryField.className += "createYourStoryField";
             createYourStoryField.placeholder = "Enter your story here...";
             //var createYourStoryTextarea = document.createElement("textarea");
-            //mainBody.appendChild(createYourStoryTextarea);
+            //document.body.appendChild(createYourStoryTextarea);
 			if (tempStory != "") { // if there is an unsaved temporary story
 				createYourStoryField.value = tempStory;
 			}
-            mainBody.insertBefore(createYourStoryField, output);
+            document.body.insertBefore(createYourStoryField, output);
             createYourStoryField.focus(); // FOCUS
             // https://stackoverflow.com/a/43488899 -- dynamically adjust height
             
@@ -528,10 +493,10 @@
 					tempStory = createYourStoryField.value; // save as temp
 				}
 				
-                mainBody.removeChild(buttonHolder);
-                mainBody.removeChild(createYourStoryField);
-                mainBody.removeChild(titleField);
-                mainBody.removeChild(helpTxt);
+                document.body.removeChild(buttonHolder);
+                document.body.removeChild(createYourStoryField);
+                document.body.removeChild(titleField);
+                document.body.removeChild(helpTxt);
                 
                 if (customStoryColl[recentStoryIndex] != null) { // if pressed save
                     customStoryColl[recentStoryIndex] = formatStory(customStoryColl[recentStoryIndex]); // save as object
@@ -547,8 +512,8 @@
             
             buttonHolder.appendChild(homeButton);
             buttonHolder.appendChild(submitButtonCS);
-            mainBody.insertBefore(buttonHolder, output);
-            mainBody.insertBefore(helpTxt, createYourStoryField);
+            document.body.insertBefore(buttonHolder, output);
+            document.body.insertBefore(helpTxt, createYourStoryField);
             
             // note -- do not remove the listener because later you can get back to it
         }
@@ -679,9 +644,9 @@
 					
 				}
 			});
-			restartButton.parentNode.insertBefore(killSwitch, restartButton.nextSibling); // customStories.parentNode.nextSibling
+			document.body.insertBefore(killSwitch, customStories.parentNode.nextSibling);
 			
-            mainBody.removeChild(document.getElementById("loading-notice"));
+            document.body.removeChild(document.getElementById("loading-notice"));
 			console.log("Loaded.");
 			this.removeEventListener("click", loadMenu); // deletirse
 		}
