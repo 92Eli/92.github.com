@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>JS WebSocket Test</title>
+	<style>
+		.connection {
+			background-color: #eee;
+		}
+		.connection.good {
+			color: #00ea1d;
+		}
+		.connection.bad {
+			color: #ea0000;
+		}
+		.warn {
+			color: #e68a00;
+		}
+		.user-action {
+			color: #0095ff;
+		}
+		.server-data {
+			color: #e67500;
+		}
+		#out {
+			border: 1px dashed black;
+			padding: 2px;
+		}
+	</style>
+</head>
+<body>
+<button id="open-btn">Open connection</button><button id="close-btn">Close Connection</button><br>
+<input type="text" name="msg" id="msg" autofocus><button id="send-btn">Send</button>
+<pre id="out"></pre>
+<script>
+	const btn = document.getElementById("send-btn");
+	const openConnectionBtn = document.getElementById("open-btn");
+	const closeConnectionBtn = document.getElementById("close-btn");
+	const msgBox = document.getElementById("msg");
+	const log = document.getElementById("out");
+	const wsServerUrl = "wss://echo.websocket.org"; // a testing site -- note wsS is Secure
+	// Create WebSocket connection.
+	const socket = new WebSocket(wsServerUrl);
+	// socket.bufferedAmount // bytes of data queued to send
+
+	// Connection opened
+	socket.addEventListener('open', event => {
+		//socket.send('Hello Server!');
+		log.innerHTML += "<span class=\"connection good\">Connected to " + socket.url + "</span><br>";
+	});
+	socket.addEventListener('close', event => {
+		log.innerHTML += "<span class=\"connection good\">Connection ended.</span><br>";
+	});
+	socket.addEventListener('error', event => {
+		log.innerHTML += "<span class=\"connection bad\">Error: " + event + "</span><br>";
+	});
+	
+	// Send data
+	function sendBoxInput() {
+		switch (socket.readyState) {
+		// 0: connecting 1: open 2: closing 3: closed
+			case 0:
+				log.innerHTML += "<span class=\"connection bad\">Could not send data because connection is not yet established</span><br>";return; // the end
+			case 2:
+				log.innerHTML += "<span class=\"connection bad\">Could not send data because connection is closing</span><br>";return;
+			case 3:
+				log.innerHTML += "<span class=\"connection bad\">Could not send data because connection has already been closed</span><br>";return;
+			case 1:
+			socket.send(msgBox.value);
+			log.innerHTML += "Sent:<span class=\"user-action\">" + msgBox.value + "</span><br>";
+			// also clear the box
+			msgBox.value = "";
+			// also refocus
+			msgBox.focus();
+		}
+	}
+	btn.addEventListener("click", sendBoxInput); // on button press
+	msgBox.addEventListener("keyup", e => { if (e.keyCode == 13) sendBoxInput(); }); // on enter press
+
+	// Listen for messages
+	socket.addEventListener('message', event => {
+		log.innerHTML += "Recieved:<span class=\"server-data\">" + event.data + "</span><br>";
+	});
+	
+	// Connection handling
+	closeConnectionBtn.addEventListener("click", event => {
+		socket.close(); // [code[, reasonTxt]] -- https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes
+	});
+	openConnectionBtn.addEventListener("click", event => {
+		switch (socket.readyState) {
+			case 2: case 3: // 2: closing 3: closed
+				// just refresh the page since all these variables are global and I'm not messing with that
+				log.innerHTML += "<span class=\"connection warn\"Reload the page to reconnect.</span>";
+				location.reload();
+				break;
+			case 0:
+				log.innerHTML += "<span class=\"connection warn\">Connecting in progress...</span><br>";
+				break;
+			case 1:
+				log.innerHTML += "<span class=\"connection warn\">Connection already established!</span><br>";
+				break;
+		}
+	});
+</script>
+</body>
+</html>
