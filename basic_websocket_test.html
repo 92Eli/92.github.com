@@ -26,81 +26,127 @@
 			border: 1px dashed black;
 			padding: 2px;
 		}
-	</style>
-</head>
+		
+		#test-description {
+			float: right;
+			clear: both;
+			position: relative;
+			top: -2em;
+			width: 250px;
+			border: 5px double #75FFB5;
+			padding: 5px;
+		}
+	</style><link rel="icon" type="image/png" href="/92eli_logo_crop_square.png">
+    <link rel="stylesheet" type="text/css" href="92eli-header-footer-format.css">
+  </head>
 <body>
-<button id="open-btn">Open connection</button><button id="close-btn">Close Connection</button><br>
-<input type="text" name="msg" id="msg" autofocus><button id="send-btn">Send</button>
-<pre id="out"></pre>
-<script>
-	const btn = document.getElementById("send-btn");
-	const openConnectionBtn = document.getElementById("open-btn");
-	const closeConnectionBtn = document.getElementById("close-btn");
-	const msgBox = document.getElementById("msg");
-	const log = document.getElementById("out");
-	const wsServerUrl = "wss://echo.websocket.org"; // a testing site -- note wsS is Secure
-	// Create WebSocket connection.
-	const socket = new WebSocket(wsServerUrl);
-	// socket.bufferedAmount // bytes of data queued to send
+	<header>
+		<ul id="navigator">
+		<img src="92eli_logo_crop.png" alt="92Eli" height="45px" style="padding: 0 25px 0 25px;">
+		<li><a href="index.html">Home</a></li>
+		<li><a href="Elijah_Mock_resume.pdf">Resume</a></li>
+		<li class="dropdown-holder"><a href="#">JavaScript Tests</a>
+		<div class="dropdown-content">
+			<a href="Notification%20Test.html">Notification Test</a>
+			<a href="Vibration%20Test.html">Vibration Test</a>
+			<a href="Cookie%20test.html">Cookie Test</a>
+			<a href="HTTP-Request-Test.html">HTTP Request Test</a>
+			<a href="LocalStorageTest.html">LocalStorage Test</a>
+			<a href="basic_websocket_test.html" id="current-page">Websocket Test</a>
+		</div></li>
+		<li><a href="contact-me.html">Contact Me</a></li>
+		<li><a href="JS-warmup.html">JS Warm-up</a></li>
+		<li class="dropdown-holder"><a>Projects</a>
+		<div class="dropdown-content">
+			<a href="ballsbounceproj/bouncing-page.html">Balls Bounce Project</a>
+			<a href="MadLibber.html">MadLibber</a>
+			<a href="https://dev.92spoons.com">92Dev site</a>
+		</div></li>
+		</ul>
+	</header>
+	<div id="body-text">
+		<h1>Websocket Test</h1>
+		<p id="test-description">This test opens a <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API" rel="noopener">websocket connection</a> to the test website <a href="https://www.websocket.org" rel="noopener">websocket.org</a>, and any data sent is echoed back by the websocket server.</p>
+		<button id="open-btn">Open connection</button><button id="close-btn">Close Connection</button><br>
+		<input type="text" name="msg" id="msg" autofocus><button id="send-btn">Send</button>
+		<pre id="out"></pre>
+	</div>
+	<script>
+		const btn = document.getElementById("send-btn");
+		const openConnectionBtn = document.getElementById("open-btn");
+		const closeConnectionBtn = document.getElementById("close-btn");
+		const msgBox = document.getElementById("msg");
+		const log = document.getElementById("out");
+		const wsServerUrl = "wss://echo.websocket.org"; // a testing site -- note wsS is Secure
+		// Create WebSocket connection.
+		const socket = new WebSocket(wsServerUrl);
+		// socket.bufferedAmount // bytes of data queued to send
 
-	// Connection opened
-	socket.addEventListener('open', event => {
-		//socket.send('Hello Server!');
-		log.innerHTML += "<span class=\"connection good\">Connected to " + socket.url + "</span><br>";
-	});
-	socket.addEventListener('close', event => {
-		log.innerHTML += "<span class=\"connection good\">Connection ended.</span><br>";
-	});
-	socket.addEventListener('error', event => {
-		log.innerHTML += "<span class=\"connection bad\">Error: " + event + "</span><br>";
-	});
-	
-	// Send data
-	function sendBoxInput() {
-		switch (socket.readyState) {
-		// 0: connecting 1: open 2: closing 3: closed
-			case 0:
-				log.innerHTML += "<span class=\"connection bad\">Could not send data because connection is not yet established</span><br>";return; // the end
-			case 2:
-				log.innerHTML += "<span class=\"connection bad\">Could not send data because connection is closing</span><br>";return;
-			case 3:
-				log.innerHTML += "<span class=\"connection bad\">Could not send data because connection has already been closed</span><br>";return;
-			case 1:
-			socket.send(msgBox.value);
-			log.innerHTML += "Sent:<span class=\"user-action\">" + msgBox.value + "</span><br>";
-			// also clear the box
-			msgBox.value = "";
-			// also refocus
-			msgBox.focus();
-		}
-	}
-	btn.addEventListener("click", sendBoxInput); // on button press
-	msgBox.addEventListener("keyup", e => { if (e.keyCode == 13) sendBoxInput(); }); // on enter press
+		// Connection opened
+		socket.addEventListener('open', event => {
+			//socket.send('Hello Server!');
+			log.innerHTML += "<span class=\"connection good\">Connected to " + socket.url + "</span><br>";
+		});
+		socket.addEventListener('close', event => {
+			log.innerHTML += "<span class=\"connection good\">Connection ended.</span><br>";
+		});
+		socket.addEventListener('error', event => {
+			log.innerHTML += "<span class=\"connection bad\">Error: " + event + "</span><br>";
+		});
 
-	// Listen for messages
-	socket.addEventListener('message', event => {
-		log.innerHTML += "Recieved:<span class=\"server-data\">" + event.data + "</span><br>";
-	});
-	
-	// Connection handling
-	closeConnectionBtn.addEventListener("click", event => {
-		socket.close(); // [code[, reasonTxt]] -- https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes
-	});
-	openConnectionBtn.addEventListener("click", event => {
-		switch (socket.readyState) {
-			case 2: case 3: // 2: closing 3: closed
-				// just refresh the page since all these variables are global and I'm not messing with that
-				log.innerHTML += "<span class=\"connection warn\"Reload the page to reconnect.</span>";
-				location.reload();
-				break;
-			case 0:
-				log.innerHTML += "<span class=\"connection warn\">Connecting in progress...</span><br>";
-				break;
-			case 1:
-				log.innerHTML += "<span class=\"connection warn\">Connection already established!</span><br>";
-				break;
+		// Send data
+		function sendBoxInput() {
+			switch (socket.readyState) {
+			// 0: connecting 1: open 2: closing 3: closed
+				case 0:
+					log.innerHTML += "<span class=\"connection bad\">Could not send data because connection is not yet established</span><br>";return; // the end
+				case 2:
+					log.innerHTML += "<span class=\"connection bad\">Could not send data because connection is closing</span><br>";return;
+				case 3:
+					log.innerHTML += "<span class=\"connection bad\">Could not send data because connection has already been closed</span><br>";return;
+				case 1:
+				socket.send(msgBox.value);
+				log.innerHTML += "Sent:<span class=\"user-action\">" + msgBox.value + "</span><br>";
+				// also clear the box
+				msgBox.value = "";
+				// also refocus
+				msgBox.focus();
+			}
 		}
-	});
-</script>
+		btn.addEventListener("click", sendBoxInput); // on button press
+		msgBox.addEventListener("keyup", e => { if (e.keyCode == 13) sendBoxInput(); }); // on enter press
+
+		// Listen for messages
+		socket.addEventListener('message', event => {
+			log.innerHTML += "Recieved:<span class=\"server-data\">" + event.data + "</span><br>";
+		});
+
+		// Connection handling
+		closeConnectionBtn.addEventListener("click", event => {
+			socket.close(); // [code[, reasonTxt]] -- https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes
+		});
+		openConnectionBtn.addEventListener("click", event => {
+			switch (socket.readyState) {
+				case 2: case 3: // 2: closing 3: closed
+					// just refresh the page since all these variables are global and I'm not messing with that
+					log.innerHTML += "<span class=\"connection warn\"Reload the page to reconnect.</span>";
+					location.reload();
+					break;
+				case 0:
+					log.innerHTML += "<span class=\"connection warn\">Connecting in progress...</span><br>";
+					break;
+				case 1:
+					log.innerHTML += "<span class=\"connection warn\">Connection already established!</span><br>";
+					break;
+			}
+		});
+	</script>
+	
+	<footer>
+		<p>Proudly open-sourced by Elijah Mock • <a href="https://github.com/92Eli/">92Eli on GitHub</a> • <a href="http://92spoons.com">Linked site - 92spoons.com</a></p>
+		<p>Be the reason someone smiles today.</p>
+		<p>Last updated 3/8/2020 (in theory) • Have patience, rennovation of this site in progress</p>
+		<p><a href="#">Back to top</a></p>
+	</footer>
 </body>
 </html>
