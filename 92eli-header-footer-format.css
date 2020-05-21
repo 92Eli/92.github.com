@@ -86,3 +86,19 @@ footer a { color: #F7F7F7; }
 	from {background-color: #49C8CC;}
 	to {background-color: #FFB5C2;}
 }
+
+/* Only for a few pages, but might ad on all at some point: */
+#ad-blurb {
+	background: rgb(215,117,4);
+	background: linear-gradient(90deg, rgba(215,117,4,1) 0%, rgba(255,226,0,1) 100%);
+	padding: 10px;
+    	font-size: 1.5rem;
+	transition: all 1.5s ease-in-out;
+}
+#ad-blurb:hover {
+	background: rgb(19,215,4);
+	background: linear-gradient(90deg, rgba(19,215,4,1) 0%, rgba(255,226,0,1) 100%);
+}
+#ad-blurb:active, #ad-blurb:target {
+	border: 2px solid rgb(12, 228, 239);
+}
