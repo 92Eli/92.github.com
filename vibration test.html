@@ -43,9 +43,12 @@
 	</header>
 	<div id="body-text">
 		<h1>Is your phone vibrating?</h1>
-		<p id="test-description">This test will work on <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/vibrate#Browser_compatibility" target="_blank" rel="noopener">most browsers</a>, other than Safari for IOS and a few others. This simple uses a button to call navigator.vibrate([arr]) in a patter with navigator.vibrate(0) to stop it.</p>
 		<button id="clickme">Press here to vibrate a pattern</button>
+		<button id="eyeofthetiger">A vibration beat</button>
+		<button id="hold" style="background: #ff8609;border: 4px solid #a7d0f5;border-radius: 5px;">Tap</button>
+		<button id="hold2" style="background: #a7d0f5;border: 4px solid #ff8609;border-radius: 5px;">Send</button>
 		<button id="stop">STOP ALL VIBRATIONS</button>
+		<p id="test-description">This test will work on <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/vibrate#Browser_compatibility" target="_blank" rel="noopener">most browsers</a>, other than Safari for IOS and a few others. This simple uses a button to call navigator.vibrate([arr]) in a patter with navigator.vibrate(0) to stop it.</p>
 	</div>
 	<footer>
 		<p>Proudly open-sourced by Elijah Mock • <a href="http://https://github.com/92Eli/">92Eli on GitHub</a> • <a href="http://92spoons.com">Linked site - 92spoons.com</a></p>
@@ -57,6 +60,8 @@
 	<script>
 		var button = document.querySelector("#clickme");
 		var stopButton = document.querySelector("#stop");
+		const hold = document.getElementById("hold");
+		const send = document.getElementById("hold2");
 		
 		window.addEventListener("load", function() {
 			// This will not work because Chrome prevents navigator.vibrate before a user taps the page. https://www.chromestatus.com/feature/5644273861001216
@@ -66,9 +71,36 @@
 			console.log("Vibrating...");
 			navigator.vibrate([50, 100, 50, 100, 400]);
 		});
+		document.getElementById("eyeofthetiger").addEventListener("click", () => {
+			console.log("It's the...");
+			const f = [100, 100, 100, 100, 750, 100, 200, 100, 200, 50, 100, 50, 150, 300];
+			navigator.vibrate(f);
+		});
 		stopButton.addEventListener("click", function() {
 			console.log("Vibration stopped.");
 			navigator.vibrate(0);
+		});
+		
+		
+		let holdOn, holdOff, build;
+		function resetHold() {
+			holdOn = 0;
+			holdOff = 0;
+			build = [];
+		}resetHold();
+		hold.addEventListener("mousedown", ()=>{
+			if (holdOff != 0) {
+				build.push(Date.now()-holdOff);
+			}
+			holdOn = Date.now();
+		});
+		hold.addEventListener("mouseup", ()=>{
+			build.push(Date.now()-holdOn);
+			holdOff = Date.now();
+		});
+		hold2.addEventListener("click", ()=>{
+			navigator.vibrate(build);
+			resetHold();
 		});
 	</script>
 </body>
