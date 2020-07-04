@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
-	<title>QR Code Scanner</title>
+	<title>QR Code Scanner | 92Eli</title>
 	<style>
 	html {
 		height: 100%;
@@ -46,12 +46,44 @@
 		max-width: 700px;
 		background-color: white;
 	}
+	
+	#small-subhead {
+		color: #00e7ff;
+	}
 	</style>
 </head>
 <body>
-
+	<header>
+		<ul id="navigator">
+		<img src="92eli_logo_crop.png" alt="92Eli" height="45px" style="padding: 0 25px 0 25px;">
+		<li><a href="" id="current-page">Home</a></li>
+		<li><a href="Elijah_Mock_resume.pdf">Resume</a></li>
+		<li class="dropdown-holder"><a href="#">JavaScript Tests</a>
+		<div class="dropdown-content">
+			<a href="Notification%20Test.html">Notification Test</a>
+			<a href="vibration%20test.html">Vibration Test</a>
+			<a href="Cookie%20test.html">Cookie Test</a>
+			<a href="HTTP-Request-Test.html">HTTP Request Test</a>
+			<a href="LocalStorageTest.html">LocalStorage Test</a>
+			<a href="basic_websocket_test.html">Websocket Test</a>
+		</div></li>
+		<li><a href="contact-me.html">Contact Me</a></li>
+		<li><a href="JS-warmup.html">JS Warm-up</a></li>
+		<li class="dropdown-holder"><a>Projects</a>
+		<div class="dropdown-content">
+			<a href="ballsbounceproj/bouncing-page.html">Balls Bounce Project</a>
+			<a href="MadLibber.html">MadLibber</a>
+			<a href="https://dev.92spoons.com">92Dev site</a>
+			<a href="qr-code-reader.html" id="current_page">QR Code Reader</a>
+		</div></li>
+		</ul>
+	</header>
+	<div id="body-text">
+	
 	<div id="container">
 		<h1>QR Code Scanner</h1>
+		
+		<p id="small-subhead">Tap the icon to begin. Generate a QR at <a href=https://www.qr-code-generator.com/" target="_blank" rel="noopener">qr-code-generator.com</a></p>
 
 		<a id="btn-scan-qr">
 			<img src="https://dab1nmslvvntp.cloudfront.net/wp-content/uploads/2017/07/1499401426qr_icon.svg">
@@ -63,6 +95,15 @@
 			<b>Data:</b> <span id="outputData"></span>
 		</div>
 	</div>
+	
+	</div>
+	
+	<footer>
+		<p>Proudly open-sourced by Elijah Mock • <a href="https://github.com/92Eli/">92Eli on GitHub</a> • <a href="http://92spoons.com">Linked site - 92spoons.com</a></p>
+		<p>Be the reason someone smiles today.</p>
+		<p>Last updated 3/8/2020 (in theory) • Have patience, rennovation of this site in progress</p>
+		<p><a href="#">Back to top</a></p>
+	</footer>
 	
 	<!-- QR code library -->
 	<script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/qr_packed.js"></script>
@@ -78,11 +119,13 @@
 		const outputData = document.getElementById("outputData");
 		const btnScanQR = document.getElementById("btn-scan-qr");
 		
+		const subHead = document.getElementById("small-subhead");
+		
 		let scanning = false;
 		
 		qrcode.callback = res => {
 			if (res) {
-				outputData.innerText = res;
+				outputData.textContent = res;
 				scanning = false;
 				
 				video.srcObject.getTracks().forEach(track => {
@@ -92,6 +135,8 @@
 				qrResult.hidden = false;
 				btnScanQR.hidden = false;
 				canvasElement.hidden = true;
+				subHead.hidden = false;
+				subHead.textContent = "Tap the icon to scan another.";
 			}
 		};
 		
@@ -102,6 +147,7 @@
 					qrResult.hidden = true;
 					btnScanQR.hidden = true;
 					canvasElement.hidden = false;
+					subHead.hidden = true;
 					video.setAttribute("playsinline", true); // Tell iOS Safari not fullscreen
 					console.log("streaming",stream);
 					video.srcObject = stream;
@@ -111,7 +157,14 @@
 				}).catch(e => {
 					if (e.code == 8) { // DOMException: Requested device not found
 						qrResult.hidden = false;
-						outputData.innerText = new Error(e);
+						outputData.textContent = new Error(e);
+						outputData.innerHTML += "<br>(Do you have a camera?)";
+					} else if (e.code == 0) { // DOMException: Permission denied
+						qrResult.hidden = false;
+						outputData.textContent = new Error(e);
+						outputData.innerHTML += "<br>(Are camera permissions for this site allowed?)";
+						subHead.hidden = false;
+						subHead.textContent = "Tap the icon to try again.";
 					}
 					console.error("Error getting media: ", e);
 				});
