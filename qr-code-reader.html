@@ -9,7 +9,7 @@
 	html {
 		height: 100%;
 	}
-	body {
+	#body-text {
 		font-family: sans-serif;
 		padding: 0 10px;
 		height: 100%;
@@ -58,8 +58,8 @@
 	<header>
 		<ul id="navigator" style="position: initial;">
 		<img src="92eli_logo_crop.png" alt="92Eli" height="45px" style="padding: 0 25px 0 25px;">
-		<div id="hamburger-drop" style="display: inline;float: right;font-size: 2rem;margin: 0 5px;" onclick="mL.hidden = !mL.hidden;">☰</div>
-		<script>const mL = document.getElementById('menu-list');mL.hidden = true;</script>
+		<div id="hamburger-drop" style="display: inline;float: right;font-size: 2rem;margin: 0 5px;cursor: pointer;user-select: none;" onclick="mL.hidden = !mL.hidden;">☰</div>
+		<script>addEventListener("load",()=>{const mL = document.getElementById('menu-list');mL.hidden = true;});</script>
 		<div id="menu-list">
 			<li><a href="" id="current-page">Home</a></li>
 			<li><a href="Elijah_Mock_resume.pdf">Resume</a></li>
@@ -84,7 +84,7 @@
 		</div>
 		</ul>
 	</header>
-	<div id="body-text">
+	<div id="body-text" style="margin: 0;">
 	
 	<div id="container">
 		<h1>QR Code Scanner</h1>
@@ -104,7 +104,7 @@
 	
 	</div>
 	
-	<footer style="position: absolute;">
+	<footer style="position: initial;">
 		<p>Proudly open-sourced by Elijah Mock • <a href="https://github.com/92Eli/">92Eli on GitHub</a> • <a href="http://92spoons.com">Linked site - 92spoons.com</a></p>
 		<p>Be the reason someone smiles today.</p>
 		<p>Last updated 3/8/2020 (in theory) • Have patience, rennovation of this site in progress</p>
