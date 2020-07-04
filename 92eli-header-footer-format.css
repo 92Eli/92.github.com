@@ -88,22 +88,23 @@ footer a { color: #F7F7F7; }
 	to {background-color: #FFB5C2;}
 }
 
-/* Only for a few pages, but might ad on all at some point: */
-#ad-blurb {
+/* Only for a few pages */
+.ad-blurb {
 	background: rgb(215,117,4);
 	background: linear-gradient(90deg, rgba(215,117,4,1) 0%, rgba(255,226,0,1) 100%);
 	padding: 10px;
     	font-size: 1.5rem;
 	transition: background 1.5s ease-in-out, font-size 0.5s ease;
 }
-#ad-blurb:hover {
+.ad-blurb:hover {
 	background: rgb(19,215,4);
 	background: linear-gradient(90deg, rgba(19,215,4,1) 0%, rgba(255,226,0,1) 100%);
 }
-#ad-blurb:active, #ad-blurb:target {
-	border: 2px solid rgb(12, 228, 239);
+.ad-blurb:active, .ad-blurb:target {
+	box-shadow: 3px 3px 3px black;
+	transform: translate(3px, 3px);
 }
-#ad-blurb a:hover {
+.ad-blurb a:hover {
     transition: text-shadow 0.25s ease;
     text-shadow: 0px 3px 7px #37ff7b;
 }
