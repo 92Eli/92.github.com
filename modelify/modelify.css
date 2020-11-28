@@ -1,5 +1,5 @@
 /**
- * Modelify.css 1.0.0
+ * Modelify.css 1.0.1
  * Created by Elijah Mock on 11/27/2020
  * https://github.com/92Eli/modelify
  */
@@ -26,6 +26,7 @@
 }
 .modelify p.main {
     margin-top: 5vh;
+    margin-bottom: 5vh;
 }
 .modelify .ops-container {
     display: flex;
