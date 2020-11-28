@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelify Demo</title>
+    <link rel="stylesheet" href="/modelify/modelify.min.css">
+    <link rel="stylesheet" href="./pushy-buttons.min.css">
+	<style>
+		body {
+			font-family: "Arial", sans-serif;
+		}
+	</style>
+</head>
+<body>
+	<h1>Look at my awesome page!</h1>
+	<button id="my-modal-btn">Show me another modal!</button>
+    <script src="/modelify/modelify.min.js"></script>
+    <script>
+		// The script is loaded, Modelify is ready to use!
+		Modelify.info("A message for you <3");
+		Modelify.prompt("Am I correct?").then(res => {
+			console.log("RESOLVED", res);
+		}, rej => {
+			console.log("REJECTED!", rej);
+		});
+
+		Modelify.choose("Custom colors!", [1, 2, 3], {
+			smoothClose: true,
+			bgColor: "green",
+			choiceColors: ["blue", "orange", "purple"],
+			closable: false
+		})
+			.then(r => console.log(`You said ${r}`))
+			.catch(e => {
+			if (e == "closed") {
+				console.log("Oh no! Modal was closed!");
+			} else {
+				throw e;
+			}
+		});
+		
+		document.getElementById("my-modal-btn").addEventListener("click", () => {
+			Modelify.info("Here you go!");
+		});
+	</script>
+</body>
+</html>

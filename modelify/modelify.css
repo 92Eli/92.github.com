@@ -1,0 +1,79 @@
+/**
+ * Modelify.css 1.0.0
+ * Created by Elijah Mock on 11/27/2020
+ * https://github.com/92Eli/modelify
+ */
+.modelify {
+    width: 50%;
+    /*height: 75%;*/
+    background-color: #008eff;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    padding: 5%;
+
+    font-size: 3rem;
+    animation: modelify-fly-in 0.5s cubic-bezier(0, 0, 0.3, 1.000) forwards;
+
+    z-index: 1001;
+}
+.modelify p {
+    text-align: center;
+    margin: 0;
+    word-break: break-word;
+}
+.modelify p.main {
+    margin-top: 5vh;
+}
+.modelify .ops-container {
+    display: flex;
+    flex-flow: wrap;
+}
+.modelify div.option {
+    flex: 1;
+    font-size: 2rem;
+    text-align: center;
+}
+.modelify-close {
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z'/></svg>");
+    background-size: cover;
+    float: right;
+    margin: 0;
+    width: 5vh;
+    height: 5vh;
+    cursor: pointer;
+}
+.modelify-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    opacity: 0.5;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+.modelify.zoom-out {
+    animation: modelify-zoom-out 0.2s ease-out forwards;
+}
+.modelify-bg.fade-out {
+    animation: modelify-fade-out 0.2s ease-out forwards;
+}
+@keyframes modelify-fly-in {
+    0% { transform: translate(-50%, -100%); }
+    100% { transform: translate(-50%, -50%); } /* Modelify ends like this */
+}
+@keyframes modelify-fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes modelify-fade-out {
+    0% { opacity: 0.25; }
+    100% { opacity: 0; }
+}
+@keyframes modelify-zoom-out {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(0.25); opacity: 0; }
+}
