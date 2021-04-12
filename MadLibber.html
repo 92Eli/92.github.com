@@ -1,7 +1,7 @@
 <!doctype html>
 <head>
     <meta charset="utf-8">
-    <title>MadLibber 4.2.3</title>
+    <title>MadLibber 4.2.4</title>
 	<style>
         body {
             background-color: #23ff3b;
@@ -38,20 +38,21 @@
             color: #fc9d03; /* please change this it burns my eyes*/
             width: 350px;
             height: 40px;
-            background-color: #1BBF2E;
+            /*background-color: #1BBF2E;*/
+			background-color: #0a7716;
 			border: none;
             border-bottom: 5px solid #ffffff;
 			outline: none;
 			resize: none;
         }
 		::placeholder {
-			color: #007E0F;
+			color: #73bb7b;/*007E0F*/
 		}
 		::-ms-input-placeholder {
-			color: #007E0F;
+			color: #73bb7b;
 		}
 		::-webkit-input-placeholder {
-			color: #007E0F;
+			color: #73bb7b;
 		}
         #input-text {
             font-size: 4em;
@@ -134,6 +135,13 @@
 		#deleteCustomStory {
 			display: inline;
 		}
+		#contrast-toggle {
+			background-color: rgb(180, 255, 188);
+			cursor: pointer;
+		}
+		.newline {
+			display: block;
+		}
 	</style>
 </head>
 <body>
@@ -141,7 +149,7 @@
 	
 	<header>
     <h1>MadLibber</h1>
-	<p>4.2.2</p>
+	<p>4.2.4</p>
 	</header>
     <p id="loading-notice">Loading...</p>
 	<div id="listOfStories" style="display: none;"></div>
@@ -156,44 +164,47 @@
 	<p id="output"></p>
 	<button id="restart" style="display: none;">Restart</button>
     <script>
-	/**TODOS
-	 * Implement keyboard navigation to custom stories
+		/**TODOS
+		 * Implement keyboard navigation to custom stories
          * Make createYourStoryField => createYourStoryTextarea
-	 * Make it so if you have '. [noun]' then the noun will have the first letter capitalized
+		 * Make it so if you have '. [noun]' then the noun will have the first letter capitalized
+		 * Make the saved story save beforeunload
+         * Public PHP DB of stories?
+		 * Add flag ?story=2 in URL to share stories and jump right to them (Goes along with PHP database)
          *
          * Public PHP DB of stories?
-	 * Add flag ?story=2 in URL to share stories and jump right to them (Goes along with PHP database)
-	**/
+		**/
         var wordsEntered = [];
         var userInput = document.getElementById("userInput");
         var submitButton = document.getElementById("submit-button");
-	var partOfSpeech = document.getElementById("type-to-enter");
-	var notice = document.getElementById("notice");
-	var output = document.getElementById("output");
-	var inputWrapper = document.getElementById("input-wrapper");
-	var restartButton = document.getElementById("restart");
-	var divBox = document.getElementById("listOfStories");
+		var partOfSpeech = document.getElementById("type-to-enter");
+		var notice = document.getElementById("notice");
+		var output = document.getElementById("output");
+		var inputWrapper = document.getElementById("input-wrapper");
+		var restartButton = document.getElementById("restart");
+		var divBox = document.getElementById("listOfStories");
         var customStories = document.getElementById("listCustomStories");
-	var killSwitch = document.createElement("button");
-	var currGameEl = document.getElementById("currGame");
-	var gameLabel = document.getElementById("game-label");
-	var storyDivider = "%fs#8)F{fsd"; // it's just to separate localStorage items
-
+		var killSwitch = document.createElement("button");
+		const contrastToggle = document.createElement("div");
+		var currGameEl = document.getElementById("currGame");
+		var gameLabel = document.getElementById("game-label");
+		var storyDivider = "%fs#8)F{fsd"; // it's just to separate localStorage items
+		
         var selection = -1;
-	var currScene = -1;
+		var currScene = -1;
         var storyBeingRead = 0; // 0th story
         var recentStoryIndex = 0;
         var playingCustomStory = false;
-	var tempStory = "";
+		var tempStory = "";
         
         /* STORIES */
-	// note cannot have ] in the story title
+		// note cannot have ] in the story title
         const story1 = "[title:A Christmas Story]One day, you got a [noun] for Christmas! You loved it so much that you just want to [verb] it."; // could store these in a seperate file
         const theStoryOfMyLife = "[title:The Story Of My Life]*dies*";
-	const storyIFoundOnline = "[Title:Deepest apologies]Dear Mrs. [name], I am truly [adj] for disrupting yeserday's class on the native customs of the [noun] tribes of the [+place]. It was rude of me to [verb] when you explained that the tribal chief wore a [adj] headpiece in the shape of a winged [noun] on his [+body part]. And my decision to [verb] in a circle was very innappropriate—even though I was only trying to mimic the [adj] native dance. I understand there's a time and a place for that kind of [noun]—and your class was not it. I know that you [verb] very hard as a teacher and deserve respect for teaching me and my fellow [plnoun] every day. I hope you accept my sincere [noun] and believe I will never excersise such [adj] judgement again. Sincerely, [name]";
+		const storyIFoundOnline = "[Title:Deepest apologies]Dear Mrs. [name], I am truly [adj] for disrupting yeserday's class on the native customs of the [noun] tribes of the [+place]. It was rude of me to [verb] when you explained that the tribal chief wore a [adj] headpiece in the shape of a winged [noun] on his [+body part]. And my decision to [verb] in a circle was very innappropriate—even though I was only trying to mimic the [adj] native dance. I understand there's a time and a place for that kind of [noun]—and your class was not it. I know that you [verb] very hard as a teacher and deserve respect for teaching me and my fellow [plnoun] every day. I hope you accept my sincere [noun] and believe I will never excersise such [adj] judgement again. Sincerely, [name]";
         const pizzaTimeStory = "[title:Pizza Time]One day, [+name] baked a [adj] pizza. It smelled [adj]. Then, [+name] [pverb] it! The crowd watching the chef went [adj] with suprise. But suddenly, the man [pverb] out of the [+place].";
-	const isaiahsStory = "[title:It's Corona Time]It was a seemingly-ordinary day, and a young [noun] named [+Name] was sitting in [+school subject]. The [noun] was about to ring, and every kid in the classroom was eager to get out of [+place], just like every other Friday. However, this Friday was special, as [+Season] break was next week. However, minutes before the bell rang, Mr. [+Name] came over the intercom. \"Attention [plnoun], due to recent events that have occurred, school will be cancelled for [+number] days.\" The classroom exploded, every student overjoyed by the news. \"HEY! ATTENTION, YOU [ADJ] [PLNOUN]! THIS WILL NOT BE AN EXTENDED BREAK!\" Every student looked [+adverb] at the speaker. \"YES\" [pverb] the principal. \"ITS NOT A BREAK BECAUSE THERE WILL BE E-LEARNING!\" The students [pverb] in unison. Then, [+Name], a [adj] kid that was known to be rebellious, stood up and declared, \"Will we not fall into the grasps of the [adj] form of learning online?! NO! Will we be herded by our teachers, like we are [+Plural Animal]  in a [noun]? NO! We need to stand up against this [adj] treatment and achieve the freedom that we deserve!\" The class, now feeling [adj] and [adj], [pverb] the door until it broke off its hinges. The students [pverb] from class to class, gaining members of the rebellion. The [adj] horde reached the teacher's lounge and formed a human battering ram, slamming students into the door. The door collapsed, and after the dust cleared, the students saw [+Number] teachers sitting on [plnoun] eating [plnoun]. The students [+adverb] charged the [adj] teachers and started to [verb] the teachers. Eventually, the room was filled with the smell of [noun] and the students remained victorious. [+adverb], the students left the school and [pverb] back to their homes. When [+Name] got home, his mom rushed to greet him. \"Goodness, what happened?\" With his [adj] hair, [adj] shirt, and the smell of [noun] still lingering on his body, it must have seemed like he got into a fight. \"Oh, just school,\" he replied and left to his room. \"Oh yeah,\" he called back. \"Did you know school got cancelled?\"";
-	// Master collection of stories -- index them here!
+		const isaiahsStory = "[title:It's Corona Time]It was a seemingly-ordinary day, and a young [noun] named [+Name] was sitting in [+school subject]. The [noun] was about to ring, and every kid in the classroom was eager to get out of [+place], just like every other Friday. However, this Friday was special, as [+Season] break was next week. However, minutes before the bell rang, Mr. [+Name] came over the intercom. \"Attention [plnoun], due to recent events that have occurred, school will be cancelled for [+number] days.\" The classroom exploded, every student overjoyed by the news. \"HEY! ATTENTION, YOU [ADJ] [PLNOUN]! THIS WILL NOT BE AN EXTENDED BREAK!\" Every student looked [+adverb] at the speaker. \"YES\" [pverb] the principal. \"ITS NOT A BREAK BECAUSE THERE WILL BE E-LEARNING!\" The students [pverb] in unison. Then, [+Name], a [adj] kid that was known to be rebellious, stood up and declared, \"Will we not fall into the grasps of the [adj] form of learning online?! NO! Will we be herded by our teachers, like we are [+Plural Animal]  in a [noun]? NO! We need to stand up against this [adj] treatment and achieve the freedom that we deserve!\" The class, now feeling [adj] and [adj], [pverb] the door until it broke off its hinges. The students [pverb] from class to class, gaining members of the rebellion. The [adj] horde reached the teacher's lounge and formed a human battering ram, slamming students into the door. The door collapsed, and after the dust cleared, the students saw [+Number] teachers sitting on [plnoun] eating [plnoun]. The students [+adverb] charged the [adj] teachers and started to [verb] the teachers. Eventually, the room was filled with the smell of [noun] and the students remained victorious. [+adverb], the students left the school and [pverb] back to their homes. When [+Name] got home, his mom rushed to greet him. \"Goodness, what happened?\" With his [adj] hair, [adj] shirt, and the smell of [noun] still lingering on his body, it must have seemed like he got into a fight. \"Oh, just school,\" he replied and left to his room. \"Oh yeah,\" he called back. \"Did you know school got cancelled?\"";
+		// Master collection of stories -- index them here!
         var storyColl = [story1, theStoryOfMyLife, storyIFoundOnline, pizzaTimeStory, isaiahsStory];
         var customStoryColl = [];
         
@@ -227,10 +238,10 @@
                 // https://randomwordgenerator.com/noun.php
                 var randNounNum = Math.floor(Math.random() * Math.floor(nounList.length));
                 return nounList[randNounNum];
-            } else if (typeOfWord === "plnoun") {
-                var randNounNum = Math.floor(Math.random() * Math.floor(nounList.length));
-                return nounList[randNounNum]+"s"; // might work
             } else if (typeOfWord === "verb") {
+                var randNounNum = Math.floor(Math.random() * Math.floor(nounList.length));
+                return nounList[randNounNum]+"s";
+            } else if (typeOfWord === "plnoun") {
                 var randVerbNum = Math.floor(Math.random() * Math.floor(verbList.length));
                 return verbList[randVerbNum];
             } else if (typeOfWord === "name") {
@@ -243,11 +254,11 @@
                 var randAdjNum = Math.floor(Math.random() * Math.floor(adjList.length));
                 return adjList[randAdjNum];
             } else if (typeOfWord === "adverb") {
-		var randAdverbNum = Math.floor(Math.random() * Math.floor(adverbList.length));
-		return adverbList[randAdverbNum];
-	    } else if (typeOfWord === "number") {
-		return Math.floor(Math.random()*1000000); // 0-1mil
-	    } else {
+				var randAdverbNum = Math.floor(Math.random() * Math.floor(adverbList.length));
+				return adverbList[randAdverbNum];
+			} else if (typeOfWord === "number") {
+				return Math.floor(Math.random()*1000000); // 0-1mil
+			} else {
                 return ""; // else no hint -- the typeOfWord is custom
             }
         };
@@ -263,6 +274,7 @@
 				divBox.style.display = "initial"; // show the stories
                 customStories.style.display = "block";
                 killSwitch.style.display = "initial"; // show the delete all button
+				contrastToggle.style.display = "block";
 				
 				selection = -1; // default to not initialized
 				document.addEventListener("keydown", navigation); // enable navigation with keyboard
@@ -333,7 +345,7 @@
 
                     // and we toss!
                     restartButton.style.display = "initial";
-                    restartButton.addEventListener("click", function(){
+                    restartButton.addEventListener("click", function() {
                         playingCustomStory = false;
                         currScene = -1;
                         setScene(currScene);
@@ -453,6 +465,7 @@
 			divBox.style.display = "none";
             customStories.style.display = "none";
 			killSwitch.style.display = "none";
+			contrastToggle.style.display = "none";
             var titleField = document.createElement("input"); // ** CANNOT HAVE ] IN THE TITLE! WILL CLOSE THE [title:] CLAUSE
             titleField.className += "createYourStoryField";
             titleField.placeholder = "Story Title";
@@ -645,6 +658,7 @@
 					divBox.style.display = "none";
                     customStories.style.display = "none";
                     killSwitch.style.display = "none";
+					contrastToggle.style.display = "none";
 					currScene = 0;
 					setScene(currScene); // start setup
 				});
@@ -662,6 +676,23 @@
 				}
 			});
 			document.body.insertBefore(killSwitch, customStories.parentNode.nextSibling);
+			const ctBtn = document.createElement("button");
+			ctBtn.textContent = "👁";
+			ctBtn.id = "contrast-toggle";
+			let t = false;
+			ctBtn.addEventListener("click", ()=>{
+				if (t) {
+					document.body.style.backgroundColor = "#23ff3b"
+					ctBtn.style.backgroundColor = "#b4ffbc";
+				} else {
+					document.body.style.backgroundColor = "#b4ffbc"
+					ctBtn.style.backgroundColor = "#23ff3b";
+				}
+				t = !t;
+			});
+			contrastToggle.appendChild(ctBtn);
+			contrastToggle.classList.add("newline");
+			document.body.appendChild(contrastToggle);
 			
             document.body.removeChild(document.getElementById("loading-notice"));
 			console.log("Loaded.");
@@ -681,6 +712,7 @@
                     divBox.style.display = "none";
                     customStories.style.display = "none";
                     killSwitch.style.display = "none";
+					contrastToggle.style.display = "none";
                     currScene = 0;
                     setScene(currScene); // start setup
                 });
@@ -726,6 +758,7 @@
                         divBox.style.display = "none";
                         customStories.style.display = "none";
                         killSwitch.style.display = "none";
+						contrastToggle.style.display = "none";
                         currScene = 0;
                         setScene(currScene);
                         this.removeEventListener("keydown", navigation); // removes the listener because something was selected
@@ -745,7 +778,8 @@
                 setScene(currScene);
             }
         });
-	
-	setScene(currScene); // initialize the scene to story selection
+		
+        currScene = -1;
+		setScene(currScene); // initialize the scene to story selection
     </script>
 </body>
